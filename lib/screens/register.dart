@@ -74,30 +74,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         especie: _especieController.text,
                       );
 
+                      // Adiciona à lista de pets
                       petsCadastrados.add(novoPet);
 
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text("Pet cadastrado com sucesso!")),
                       );
 
+                      // Limpar os campos do formulário
                       _nomeController.clear();
                       _idadeController.clear();
                       _especieController.clear();
+
+                      // Volta para a tela de listagem automaticamente
+                      Navigator.pop(context);
                     }
                   },
                   child: const Text("Salvar"),
-                ),
-              ),
-              const SizedBox(height: 10),
-              Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const PetsScreen()),
-                    );
-                  },
-                  child: const Text("Ver meus pets"),
                 ),
               ),
             ],

@@ -35,6 +35,19 @@ class PetsScreen extends StatelessWidget {
           );
         },
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          // Navega para a tela de cadastro e espera o retorno
+          await Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const RegisterScreen()),
+          );
+          // Força rebuild da tela para atualizar a lista de pets
+          (context as Element).reassemble();
+        },
+        child: const Icon(Icons.add),
+        tooltip: "Adicionar Pet",
+      ),
     );
   }
 }
