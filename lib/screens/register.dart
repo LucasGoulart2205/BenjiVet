@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../models/pet.dart';
+import 'pets.dart';
 
+List<Pet> petsCadastrados = [];
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -64,23 +66,38 @@ class _RegisterScreenState extends State<RegisterScreen> {
               const SizedBox(height: 20),
               Center(
                 child: ElevatedButton(
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      final novoPet = Pet(
+                        nome: _nomeController.text,
+                        idade: int.parse(_idadeController.text),
+                        especie: _especieController.text,
+                      );
 
-                        final novoPet = Pet(
-                          nome: _nomeController.text,
-                          idade: int.parse(_idadeController.text),
-                          especie: _especieController.text,
-                        );
+                      petsCadastrados.add(novoPet);
 
-                        print("Pet criado: ${novoPet.nome}, ${novoPet.idade}, ${novoPet.especie}");
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Pet cadastrado com sucesso!")),
+                      );
 
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("Pet cadastrado com sucesso!")),
-                        );
-                      }
-                    },
+                      _nomeController.clear();
+                      _idadeController.clear();
+                      _especieController.clear();
+                    }
+                  },
                   child: const Text("Salvar"),
+                ),
+              ),
+              const SizedBox(height: 10),
+              Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const PetsScreen()),
+                    );
+                  },
+                  child: const Text("Ver meus pets"),
                 ),
               ),
             ],
