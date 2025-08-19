@@ -10,39 +10,61 @@ class PetsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Meus Pets"),
+        title: const Text("Pets"),
         centerTitle: true,
       ),
-      body: ListView.builder(
+      body: GridView.builder(
+        padding: const EdgeInsets.all(16),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 16,
+          mainAxisSpacing: 16,
+          childAspectRatio: 0.8,
+        ),
         itemCount: petsCadastrados.length,
         itemBuilder: (context, index) {
           final pet = petsCadastrados[index];
-          return Card(
-            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: ListTile(
-              title: Text(pet.nome),
-              subtitle: Text("${pet.especie}, ${pet.idade} anos"),
-              trailing: const Icon(Icons.arrow_forward),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => InformacoesPetScreen(pet: pet),
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => InformacoesPetScreen(pet: pet),
+                ),
+              );
+            },
+            child: Column(
+              children: [
+                Container(
+                  width: 100,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.grey[300],
+                    image: pet.foto != null
+                        ? DecorationImage(
+                      image: FileImage(pet.foto!),
+                      fit: BoxFit.cover,
+                    )
+                        : null,
                   ),
-                );
-              },
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  pet.nome,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+              ],
             ),
           );
         },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          // Navega para a tela de cadastro e espera o retorno
           await Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const RegisterScreen()),
           );
-          // Força rebuild da tela para atualizar a lista de pets
           (context as Element).reassemble();
         },
         child: const Icon(Icons.add),
