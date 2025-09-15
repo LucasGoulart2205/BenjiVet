@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'signup.dart';
 import 'homescreen.dart';
+import 'signup.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -29,18 +29,18 @@ class _LoginScreenState extends State<LoginScreen> {
     final data = jsonDecode(response.body);
 
     if (response.statusCode == 200) {
+      //
+      final token = data['access_token'];
+
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => HomeScreen(
-            user: data['user'],
-            token: data['access_token'],
-          ),
+          builder: (context) => HomeScreen(token: token),
         ),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(data['error'] ?? "Erro no login")),
+        SnackBar(content: Text(data['msg'] ?? "Erro no login")),
       );
     }
   }
@@ -57,7 +57,10 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               const Text(
                 "Login",
-                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.teal),
+                style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.teal),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 40),
@@ -100,7 +103,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 child: const Text(
                   "Entrar",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                  style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
                 ),
               ),
               const SizedBox(height: 12),
@@ -108,12 +114,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 onPressed: () {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => const SignupScreen()),
+                    MaterialPageRoute(
+                        builder: (context) => const SignupScreen()),
                   );
                 },
                 child: const Text(
                   "Não tem conta? Cadastre-se",
-                  style: TextStyle(color: Colors.teal, fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                      color: Colors.teal, fontWeight: FontWeight.w600),
                 ),
               ),
             ],

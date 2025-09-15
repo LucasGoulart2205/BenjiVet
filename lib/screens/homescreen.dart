@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'pets.dart';
 import 'perfil.dart';
+import 'chat_ia.dart';
 
 class HomeScreen extends StatefulWidget {
-  final Map<String, dynamic> user;
   final String token;
 
-  const HomeScreen({super.key, required this.user, required this.token});
+  const HomeScreen({super.key, required this.token});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -20,7 +20,8 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _screens = [
-      PetsScreen(user: widget.user, token: widget.token),
+      PetsScreen(token: widget.token),
+      ChatIaScreen(token: widget.token),
       PerfilScreen(token: widget.token),
     ];
   }
@@ -38,6 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
         },
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.pets), label: "Pets"),
+          BottomNavigationBarItem(icon: Icon(Icons.smart_toy), label: "Benji IA"),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: "Perfil"),
         ],
       ),
