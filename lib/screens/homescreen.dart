@@ -14,22 +14,21 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
-  late List<Widget> _screens;
 
-  @override
-  void initState() {
-    super.initState();
-    _screens = [
-      PetsScreen(token: widget.token),
-      ChatIaScreen(token: widget.token),
-      PerfilScreen(token: widget.token),
-    ];
-  }
+  // As telas são criadas uma única vez
+  late final List<Widget> _screens = [
+    const PetsScreen(),
+    const ChatIaScreen(),
+    PerfilScreen(token: widget.token),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _screens[_currentIndex],
+      body: IndexedStack(
+        index: _currentIndex,
+        children: _screens,
+      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         selectedItemColor: Colors.teal,

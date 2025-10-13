@@ -1,4 +1,7 @@
 import 'dart:io';
+import 'vacina.dart';
+import 'remedio.dart';
+import 'consulta.dart';
 
 class Pet {
   final int? id;
@@ -7,9 +10,12 @@ class Pet {
   final String raca;
   final DateTime? dataNascimento;
   final String? sexo;
-  final int? idade; // quando vier direto do backend
+  final int? idade;
   final int? tutorId;
   final File? foto;
+  final List<Vacina> vacinas;
+  final List<Remedio> remedios;
+  final List<Consulta> consultas;
 
   Pet({
     this.id,
@@ -21,12 +27,18 @@ class Pet {
     this.idade,
     this.tutorId,
     this.foto,
-  });
+    List<Vacina>? vacinas,
+    List<Remedio>? remedios,
+    List<Consulta>? consultas,
+  })  : vacinas = vacinas ?? [],
+        remedios = remedios ?? [],
+        consultas = consultas ?? [];
 
-  /// Calcula idade formatada (quando tiver dataNascimento)
   String get idadeFormatada {
     if (dataNascimento == null) {
-      return idade != null ? "$idade ano${idade! > 1 ? 's' : ''}" : "Não informado";
+      return idade != null
+          ? "$idade ano${idade! > 1 ? 's' : ''}"
+          : "Não informado";
     }
 
     final hoje = DateTime.now();
@@ -48,7 +60,7 @@ class Pet {
     }
   }
 
-  /// Construtor para criar Pet a partir de JSON
+  // ✅ Conversão de JSON para Pet
   factory Pet.fromJson(Map<String, dynamic> json) {
     return Pet(
       id: json['id'],
@@ -58,10 +70,26 @@ class Pet {
       idade: json['idade'],
       tutorId: json['tutor_id'],
       sexo: json['sexo'],
+      dataNascimento: json['dataNascimento'] != null
+          ? DateTime.tryParse(json['dataNascimento'])
+          : null,
+      foto: json['fotoPath'] != null ? File(json['fotoPath']) : null,
+      vacinas: (json['vacinas'] as List<dynamic>?)
+          ?.map((v) => Vacina.fromJson(v))
+          .toList() ??
+          [],
+      remedios: (json['remedios'] as List<dynamic>?)
+          ?.map((r) => Remedio.fromJson(r))
+          .toList() ??
+          [],
+      consultas: (json['consultas'] as List<dynamic>?)
+          ?.map((c) => Consulta.fromJson(c))
+          .toList() ??
+          [],
     );
   }
 
-  /// Converter Pet para JSON (para enviar ao backend)
+  // ✅ Conversão de Pet para JSON
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -71,6 +99,11 @@ class Pet {
       'idade': idade,
       'tutor_id': tutorId,
       'sexo': sexo,
+      'dataNascimento': dataNascimento?.toIso8601String(),
+      'fotoPath': foto?.path, // salva apenas o caminho da imagem
+      'vacinas': vacinas.map((v) => v.toJson()).toList(),
+      'remedios': remedios.map((r) => r.toJson()).toList(),
+      'consultas': consultas.map((c) => c.toJson()).toList(),
     };
   }
 }

@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:benjivet/models/pet.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 
 class RegisterScreen extends StatefulWidget {
-  final String token;
-
-  const RegisterScreen({super.key, required this.token});
+  const RegisterScreen({super.key});
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
@@ -14,82 +10,172 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController nomeController = TextEditingController();
-  final TextEditingController especieController = TextEditingController();
   final TextEditingController racaController = TextEditingController();
-  final TextEditingController sexoController = TextEditingController();
   final TextEditingController dataController = TextEditingController();
 
-  Future<void> cadastrarPet() async {
-    final url = Uri.parse("http://10.0.2.2:5000/pets");
-    final body = {
-      "nome": nomeController.text,
-      "especie": especieController.text,
-      "raca": racaController.text,
-      "sexo": sexoController.text,
-      "dataNascimento": dataController.text,
-    };
+  String? especieSelecionada;
+  String? sexoSelecionado;
 
-    final response = await http.post(
-      url,
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer ${widget.token}"
-      },
-      body: jsonEncode(body),
+  void cadastrarPet() {
+    final pet = Pet(
+      nome: nomeController.text,
+      especie: especieSelecionada ?? "",
+      raca: racaController.text,
+      sexo: sexoSelecionado,
+      dataNascimento:
+      DateTime.tryParse(dataController.text) ?? DateTime.now(),
     );
-
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      final pet = Pet(
-        nome: nomeController.text,
-        especie: especieController.text,
-        raca: racaController.text,
-        sexo: sexoController.text,
-        dataNascimento: DateTime.tryParse(dataController.text) ?? DateTime.now(),
-      );
-      Navigator.pop(context, pet);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Erro ao cadastrar pet")),
-      );
-    }
+    Navigator.pop(context, pet);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Cadastrar Pet"), centerTitle: true),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              TextField(
-                controller: nomeController,
-                decoration: const InputDecoration(labelText: "Nome"),
+      appBar: AppBar(
+        title: const Text("Cadastrar Pet"),
+        centerTitle: true,
+        backgroundColor: Colors.teal,
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Título estilizado
+            const Text(
+              "Novo Pet",
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                color: Colors.teal,
               ),
-              TextField(
-                controller: especieController,
-                decoration: const InputDecoration(labelText: "Espécie"),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 30),
+
+            // Nome
+            TextField(
+              controller: nomeController,
+              decoration: InputDecoration(
+                labelText: "Nome",
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                filled: true,
+                fillColor: Colors.grey[100],
               ),
-              TextField(
-                controller: racaController,
-                decoration: const InputDecoration(labelText: "Raça"),
+            ),
+            const SizedBox(height: 20),
+
+            // Dropdown para espécie
+            DropdownButtonFormField<String>(
+              value: especieSelecionada,
+              decoration: InputDecoration(
+                labelText: "Espécie",
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                filled: true,
+                fillColor: Colors.grey[100],
               ),
-              TextField(
-                controller: sexoController,
-                decoration: const InputDecoration(labelText: "Sexo"),
+              items: const [
+                DropdownMenuItem(value: "Cachorro", child: Text("Cachorro")),
+                DropdownMenuItem(value: "Gato", child: Text("Gato")),
+                DropdownMenuItem(value: "Passarinho", child: Text("Passarinho")),
+              ],
+              onChanged: (value) {
+                setState(() {
+                  especieSelecionada = value;
+                });
+              },
+            ),
+            const SizedBox(height: 20),
+
+            // Raça
+            TextField(
+              controller: racaController,
+              decoration: InputDecoration(
+                labelText: "Raça",
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                filled: true,
+                fillColor: Colors.grey[100],
               ),
-              TextField(
-                controller: dataController,
-                decoration: const InputDecoration(labelText: "Data Nascimento (yyyy-mm-dd)"),
+            ),
+            const SizedBox(height: 20),
+
+            // Dropdown para sexo
+            DropdownButtonFormField<String>(
+              value: sexoSelecionado,
+              decoration: InputDecoration(
+                labelText: "Sexo",
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                filled: true,
+                fillColor: Colors.grey[100],
               ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: cadastrarPet,
-                child: const Text("Cadastrar Pet"),
+              items: const [
+                DropdownMenuItem(value: "Macho", child: Text("Macho")),
+                DropdownMenuItem(value: "Fêmea", child: Text("Fêmea")),
+              ],
+              onChanged: (value) {
+                setState(() {
+                  sexoSelecionado = value;
+                });
+              },
+            ),
+            const SizedBox(height: 20),
+
+            // Data de nascimento
+            TextField(
+              controller: dataController,
+              readOnly: true,
+              decoration: InputDecoration(
+                labelText: "Data de Nascimento",
+                suffixIcon: const Icon(Icons.calendar_today),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                filled: true,
+                fillColor: Colors.grey[100],
               ),
-            ],
-          ),
+              onTap: () async {
+                DateTime? pickedDate = await showDatePicker(
+                  context: context,
+                  initialDate: DateTime.now(),
+                  firstDate: DateTime(1900),
+                  lastDate: DateTime.now(),
+                  locale: const Locale("pt", "BR"),
+                );
+
+                if (pickedDate != null) {
+                  setState(() {
+                    dataController.text =
+                    "${pickedDate.day.toString().padLeft(2, '0')}/${pickedDate.month.toString().padLeft(2, '0')}/${pickedDate.year}";
+                  });
+                }
+              },
+            ),
+            const SizedBox(height: 30),
+
+            // Botão de cadastro
+            ElevatedButton(
+              onPressed: cadastrarPet,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.teal,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: const Text(
+                "Cadastrar",
+                style: TextStyle(fontSize: 18, color: Colors.white),
+              ),
+            ),
+          ],
         ),
       ),
     );

@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ChatIaScreen extends StatefulWidget {
-  final String token;
-
-  const ChatIaScreen({super.key, required this.token});
+  const ChatIaScreen({super.key});
 
   @override
   State<ChatIaScreen> createState() => _ChatIaScreenState();
