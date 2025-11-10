@@ -1,15 +1,21 @@
 <manifest xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- ✅ Permissão necessária para notificações em Android 13+ -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"
         tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
     <application
-        android:label="benjivet"
+        android:label="BenjiVet"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/logopng">
+
+        <!-- Chave da API do Google Maps -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyA9wSk0YJcIWpTeuAsTpddShFDLZDTmf5c"/>
 
         <activity
             android:name=".MainActivity"
@@ -21,7 +27,6 @@
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize">
 
-            <!-- Tema exibido enquanto o Flutter inicializa -->
             <meta-data
                 android:name="io.flutter.embedding.android.NormalTheme"
                 android:resource="@style/NormalTheme"
@@ -33,13 +38,11 @@
             </intent-filter>
         </activity>
 
-        <!-- Flutter meta-data -->
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
     </application>
 
-    <!-- Queries necessárias para o Flutter plugin de Process Text -->
     <queries>
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>

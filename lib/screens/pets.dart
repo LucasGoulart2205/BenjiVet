@@ -37,7 +37,8 @@ class _PetsScreenState extends State<PetsScreen> {
   // 🔹 Salvar lista de pets
   Future<void> _salvarPets() async {
     final prefs = await SharedPreferences.getInstance();
-    final String jsonPets = jsonEncode(petsCadastrados.map((p) => p.toJson()).toList());
+    final String jsonPets =
+    jsonEncode(petsCadastrados.map((p) => p.toJson()).toList());
     await prefs.setString('pets', jsonPets);
   }
 
@@ -87,13 +88,23 @@ class _PetsScreenState extends State<PetsScreen> {
         itemBuilder: (context, index) {
           final pet = petsCadastrados[index];
           return GestureDetector(
-            onTap: () {
-              Navigator.push(
+            onTap: () async {
+              // Navega para InformacoesPetScreen e aguarda retorno
+              final petApagado = await Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => InformacoesPetScreen(pet: pet),
                 ),
               );
+
+              // Se veio algum pet apagado, remove da lista e salva
+              if (petApagado != null && petApagado is Pet) {
+                setState(() {
+                  petsCadastrados
+                      .removeWhere((p) => p.id == petApagado.id);
+                });
+                _salvarPets();
+              }
             },
             child: Column(
               children: [
@@ -115,10 +126,6 @@ class _PetsScreenState extends State<PetsScreen> {
                   pet.nome,
                   style: const TextStyle(
                       fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  "${pet.especie} - ${pet.idadeFormatada}",
-                  style: const TextStyle(fontSize: 14),
                 ),
               ],
             ),

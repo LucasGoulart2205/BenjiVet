@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../services/openai_service.dart';
 
 class ChatIaScreen extends StatefulWidget {
   const ChatIaScreen({super.key});
@@ -10,17 +11,25 @@ class ChatIaScreen extends StatefulWidget {
 class _ChatIaScreenState extends State<ChatIaScreen> {
   final TextEditingController _controller = TextEditingController();
   final List<Map<String, String>> _messages = [];
+  final OpenAIService _openAIService = OpenAIService();
+  bool _isLoading = false;
 
-  void _sendMessage() {
+  void _sendMessage() async {
     final text = _controller.text.trim();
     if (text.isEmpty) return;
 
     setState(() {
       _messages.add({"user": text});
-      _messages.add({"ia": "Resposta automática da IA: $text"});
+      _isLoading = true;
     });
-
     _controller.clear();
+
+    final response = await _openAIService.sendMessage(text);
+
+    setState(() {
+      _messages.add({"ia": response});
+      _isLoading = false;
+    });
   }
 
   @override
@@ -39,42 +48,34 @@ class _ChatIaScreenState extends State<ChatIaScreen> {
               itemCount: _messages.length,
               itemBuilder: (context, index) {
                 final msg = _messages[index];
-                if (msg.containsKey("user")) {
-                  return Align(
-                    alignment: Alignment.centerRight,
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(vertical: 4),
-                      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
-                      decoration: BoxDecoration(
-                        color: Colors.teal[200],
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        msg["user"]!,
-                        style: const TextStyle(color: Colors.white),
-                      ),
+                final isUser = msg.containsKey("user");
+
+                return Align(
+                  alignment:
+                  isUser ? Alignment.centerRight : Alignment.centerLeft,
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(vertical: 4),
+                    padding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
+                    decoration: BoxDecoration(
+                      color: isUser ? Colors.teal[200] : Colors.grey[300],
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                  );
-                } else {
-                  return Align(
-                    alignment: Alignment.centerLeft,
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(vertical: 4),
-                      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
-                      decoration: BoxDecoration(
-                        color: Colors.grey[300],
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        msg["ia"]!,
-                        style: const TextStyle(color: Colors.black87),
-                      ),
+                    child: Text(
+                      msg.values.first,
+                      style: TextStyle(
+                          color: isUser ? Colors.white : Colors.black87),
                     ),
-                  );
-                }
+                  ),
+                );
               },
             ),
           ),
+          if (_isLoading)
+            const Padding(
+              padding: EdgeInsets.all(8),
+              child: CircularProgressIndicator(color: Colors.teal),
+            ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             color: Colors.white,
@@ -91,7 +92,8 @@ class _ChatIaScreenState extends State<ChatIaScreen> {
                         borderRadius: BorderRadius.circular(30),
                         borderSide: BorderSide.none,
                       ),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+                      contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 20),
                     ),
                   ),
                 ),

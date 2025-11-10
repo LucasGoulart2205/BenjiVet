@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'pets.dart';
 import 'perfil.dart';
 import 'chat_ia.dart';
+import 'map_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final String token;
@@ -15,9 +16,9 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
 
-  // As telas são criadas uma única vez
   late final List<Widget> _screens = [
     const PetsScreen(),
+    const MapScreen(), // <-- mover MapScreen para segunda posição
     const ChatIaScreen(),
     PerfilScreen(token: widget.token),
   ];
@@ -37,11 +38,26 @@ class _HomeScreenState extends State<HomeScreen> {
           setState(() => _currentIndex = index);
         },
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.pets), label: "Pets"),
-          BottomNavigationBarItem(icon: Icon(Icons.smart_toy), label: "Benji IA"),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Perfil"),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.pets),
+            label: "Pets",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.map),
+            label: "Mapa",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.chat_bubble),
+            label: "Chat",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: "Perfil",
+          ),
         ],
       ),
     );
   }
 }
+
+

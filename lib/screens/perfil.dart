@@ -54,10 +54,12 @@ class _PerfilScreenState extends State<PerfilScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: loading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator(color: Colors.white))
           : user == null
           ? const Center(child: Text("Nenhum usuário encontrado"))
           : Container(
+        width: double.infinity,
+        height: double.infinity,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [Color(0xFF00BFA5), Color(0xFF1DE9B6)],
@@ -66,45 +68,68 @@ class _PerfilScreenState extends State<PerfilScreen> {
           ),
         ),
         child: SafeArea(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-              child: Column(
-                children: [
-                  // Avatar
-                  Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black26,
-                          blurRadius: 10,
-                          offset: Offset(0, 5),
-                        ),
-                      ],
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+                horizontal: 24, vertical: 20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // Topo
+                Column(
+                  children: [
+                    const Text(
+                      "Meu Perfil",
+                      style: TextStyle(
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        letterSpacing: 1.2,
+                      ),
                     ),
-                    child: CircleAvatar(
-                      radius: 70,
-                      backgroundColor: Colors.white,
-                      child: Text(
-                        user!['nome'][0].toUpperCase(),
-                        style: const TextStyle(
-                          fontSize: 50,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.teal,
+                    const SizedBox(height: 30),
+
+                    // Avatar com sombra suave
+                    Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.white.withOpacity(0.3),
+                            blurRadius: 25,
+                            spreadRadius: 3,
+                          ),
+                        ],
+                      ),
+                      child: CircleAvatar(
+                        radius: 65,
+                        backgroundColor: Colors.white,
+                        child: Text(
+                          user!['nome'][0].toUpperCase(),
+                          style: const TextStyle(
+                            fontSize: 55,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.teal,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 25),
-                  Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                    elevation: 8,
-                    shadowColor: Colors.black26,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 25),
+                    const SizedBox(height: 25),
+
+                    // Card do perfil
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(30),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.15),
+                            blurRadius: 15,
+                            offset: const Offset(0, 8),
+                          ),
+                        ],
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 30, horizontal: 25),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -116,10 +141,13 @@ class _PerfilScreenState extends State<PerfilScreen> {
                               color: Colors.teal,
                             ),
                           ),
-                          const SizedBox(height: 12),
+                          const SizedBox(height: 10),
+                          const Divider(thickness: 1.2, height: 20),
+                          const SizedBox(height: 8),
                           Row(
                             children: [
-                              const Icon(Icons.email, color: Colors.teal),
+                              const Icon(Icons.email_outlined,
+                                  color: Colors.teal, size: 22),
                               const SizedBox(width: 10),
                               Expanded(
                                 child: Text(
@@ -132,44 +160,69 @@ class _PerfilScreenState extends State<PerfilScreen> {
                               ),
                             ],
                           ),
+                          const SizedBox(height: 15),
+                          if (user!.containsKey('data_criacao')) ...[
+                            Row(
+                              children: [
+                                const Icon(
+                                    Icons.calendar_today_outlined,
+                                    color: Colors.teal,
+                                    size: 20),
+                                const SizedBox(width: 10),
+                                Text(
+                                  "Desde ${user!['data_criacao']}",
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.black54,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ],
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 40),
-                  // Logout Button
-                  SizedBox(
+                  ],
+                ),
+
+                // Botão de logout fixado embaixo
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: SizedBox(
                     width: double.infinity,
-                    child: ElevatedButton(
+                    child: ElevatedButton.icon(
                       onPressed: () {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const LoginScreen(),
+                            builder: (context) =>
+                            const LoginScreen(),
                           ),
                         );
                       },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.teal[700],
-                        padding: const EdgeInsets.symmetric(vertical: 18),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        elevation: 5,
-                        shadowColor: Colors.black45,
-                      ),
-                      child: const Text(
-                        "Sair",
+                      icon: const Icon(Icons.logout_rounded, size: 22),
+                      label: const Text(
+                        "Sair da conta",
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
                         ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.teal[700],
+                        padding:
+                        const EdgeInsets.symmetric(vertical: 18),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                        shadowColor: Colors.black45,
+                        elevation: 8,
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),

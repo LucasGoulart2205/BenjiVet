@@ -453,11 +453,15 @@ class _InformacoesPetScreenState extends State<InformacoesPetScreen> {
             child: Icon(_iconePorEspecie(pet.especie), size: 70, color: Colors.teal),
           ),
           const SizedBox(height: 20),
-          Text(pet.nome,
-              style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.black87)),
+          Text(
+            pet.nome,
+            style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.black87),
+          ),
           const SizedBox(height: 10),
-          Text("${pet.especie} - ${pet.raca}",
-              style: const TextStyle(fontSize: 18, color: Colors.black54)),
+          Text(
+            "${pet.especie} - ${pet.raca}",
+            style: const TextStyle(fontSize: 18, color: Colors.black54),
+          ),
           const SizedBox(height: 25),
           Card(
             elevation: 2,
@@ -477,10 +481,43 @@ class _InformacoesPetScreenState extends State<InformacoesPetScreen> {
               subtitle: Text(pet.sexo ?? "Não informado"),
             ),
           ),
+
+          // ✅ BOTÃO PARA REMOVER PET
+          const SizedBox(height: 25),
+          ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            ),
+            icon: const Icon(Icons.delete, color: Colors.white),
+            label: const Text("Apagar Pet", style: TextStyle(color: Colors.white)),
+            onPressed: () async {
+              final confirmar = await showDialog<bool>(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text("Confirmar exclusão"),
+                  content: const Text("Deseja realmente apagar este pet?"),
+                  actions: [
+                    TextButton(
+                        onPressed: () => Navigator.pop(context, false),
+                        child: const Text("Cancelar")),
+                    TextButton(
+                        onPressed: () => Navigator.pop(context, true),
+                        child: const Text("Apagar")),
+                  ],
+                ),
+              );
+              if (confirmar == true) {
+                // Envia o pet apagado de volta para a tela anterior
+                Navigator.pop(context, pet);
+              }
+            },
+          ),
         ],
       ),
     );
   }
+
 
   // 🔹 Vacinas com separação (Futuras / Realizadas)
   Widget _telaVacinas() {
@@ -590,8 +627,8 @@ class _InformacoesPetScreenState extends State<InformacoesPetScreen> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _abaSelecionada,
         onTap: (index) => setState(() => _abaSelecionada = index),
-        selectedItemColor: Colors.teal,        // botão selecionado
-        unselectedItemColor: Colors.grey, // botões não selecionados
+        selectedItemColor: Colors.teal,
+        unselectedItemColor: Colors.grey,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.info), label: "Informações"),
           BottomNavigationBarItem(icon: Icon(Icons.vaccines), label: "Vacinas"),

@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'screens/login.dart';
-import 'services/notification_service.dart'; // ✅ importa o serviço de notificações
+import 'services/notification_service.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // ✅ Inicializa o serviço de notificações antes de iniciar o app
+  await dotenv.load(fileName: ".env");
   await NotificationService().init();
-
   runApp(const BenjiVetApp());
 }
+
 
 class BenjiVetApp extends StatelessWidget {
   const BenjiVetApp({super.key});

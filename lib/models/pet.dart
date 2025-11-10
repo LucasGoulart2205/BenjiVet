@@ -60,7 +60,12 @@ class Pet {
     }
   }
 
-  // ✅ Conversão de JSON para Pet
+  String get apgar {
+    if (vacinas.isNotEmpty && remedios.isNotEmpty) return "10";
+    if (vacinas.isNotEmpty) return "5";
+    return "3";
+  }
+
   factory Pet.fromJson(Map<String, dynamic> json) {
     return Pet(
       id: json['id'],
@@ -89,7 +94,6 @@ class Pet {
     );
   }
 
-  // ✅ Conversão de Pet para JSON
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -100,7 +104,7 @@ class Pet {
       'tutor_id': tutorId,
       'sexo': sexo,
       'dataNascimento': dataNascimento?.toIso8601String(),
-      'fotoPath': foto?.path, // salva apenas o caminho da imagem
+      'fotoPath': foto?.path,
       'vacinas': vacinas.map((v) => v.toJson()).toList(),
       'remedios': remedios.map((r) => r.toJson()).toList(),
       'consultas': consultas.map((c) => c.toJson()).toList(),
