@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'pets.dart';
 import 'perfil.dart';
 import 'chat_ia.dart';
-import 'map_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final String token;
@@ -18,7 +17,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   late final List<Widget> _screens = [
     const PetsScreen(),
-    const MapScreen(), // <-- mover MapScreen para segunda posição
     const ChatIaScreen(),
     PerfilScreen(token: widget.token),
   ];
@@ -41,10 +39,6 @@ class _HomeScreenState extends State<HomeScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.pets),
             label: "Pets",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.map),
-            label: "Mapa",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.chat_bubble),
