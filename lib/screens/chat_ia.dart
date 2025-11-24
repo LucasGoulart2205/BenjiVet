@@ -1,6 +1,8 @@
 import 'dart:io';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../services/openai_service.dart';
 
 class ChatIaScreen extends StatefulWidget {
@@ -18,6 +20,29 @@ class _ChatIaScreenState extends State<ChatIaScreen> {
   final List<Map<String, dynamic>> _messages = [];
   bool _isLoading = false;
   File? _selectedImage;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadMessages();
+  }
+
+  void _loadMessages() async {
+    final prefs = await SharedPreferences.getInstance();
+    final data = prefs.getString('chat_history');
+    if (data != null) {
+      setState(() {
+        _messages.clear();
+        _messages.addAll(List<Map<String, dynamic>>.from(jsonDecode(data)));
+      });
+      _scrollToBottom();
+    }
+  }
+
+  void _saveMessages() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('chat_history', jsonEncode(_messages));
+  }
 
   void _pickImage() async {
     final picker = ImagePicker();
@@ -43,6 +68,7 @@ class _ChatIaScreenState extends State<ChatIaScreen> {
     });
 
     _controller.clear();
+    _saveMessages();
 
     final response = await _openAIService.sendMessage(
       message: text,
@@ -55,6 +81,7 @@ class _ChatIaScreenState extends State<ChatIaScreen> {
       _isLoading = false;
     });
 
+    _saveMessages();
     _scrollToBottom();
   }
 

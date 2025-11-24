@@ -482,7 +482,6 @@ class _InformacoesPetScreenState extends State<InformacoesPetScreen> {
             ),
           ),
 
-          // ✅ BOTÃO PARA REMOVER PET
           const SizedBox(height: 25),
           ElevatedButton.icon(
             style: ElevatedButton.styleFrom(

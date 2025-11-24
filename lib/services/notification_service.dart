@@ -15,11 +15,9 @@ class NotificationService {
   FlutterLocalNotificationsPlugin();
 
   Future<void> init() async {
-    // Inicializa o timezone
     tz.initializeTimeZones();
     tz.setLocalLocation(tz.getLocation('America/Sao_Paulo'));
 
-    // Configuração Android
     const AndroidInitializationSettings initializationSettingsAndroid =
     AndroidInitializationSettings('@mipmap/ic_launcher');
 
@@ -27,7 +25,6 @@ class NotificationService {
       android: initializationSettingsAndroid,
     );
 
-    // Inicializa plugin
     await _notificationsPlugin.initialize(
       initializationSettings,
       onDidReceiveNotificationResponse: (response) {
@@ -35,7 +32,6 @@ class NotificationService {
       },
     );
 
-    // Solicita permissão no Android 13+
     await _requestPermission();
   }
 
@@ -52,13 +48,11 @@ class NotificationService {
     required String body,
     required DateTime scheduledTime,
   }) async {
-    // ⚠️ Verifica se o horário é no futuro
     if (scheduledTime.isBefore(DateTime.now())) {
       debugPrint("⚠️ Tentativa de agendar notificação no passado.");
       return;
     }
 
-    // ⚠️ Verifica permissão
     final permissionStatus = await Permission.notification.status;
     if (!permissionStatus.isGranted) {
       debugPrint("⚠️ Permissão de notificação não concedida.");

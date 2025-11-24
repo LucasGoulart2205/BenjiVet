@@ -89,7 +89,6 @@ class _PetsScreenState extends State<PetsScreen> {
           final pet = petsCadastrados[index];
           return GestureDetector(
             onTap: () async {
-              // Navega para InformacoesPetScreen e aguarda retorno
               final petApagado = await Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -97,7 +96,6 @@ class _PetsScreenState extends State<PetsScreen> {
                 ),
               );
 
-              // Se veio algum pet apagado, remove da lista e salva
               if (petApagado != null && petApagado is Pet) {
                 setState(() {
                   petsCadastrados
